@@ -1,3 +1,5 @@
+__author__ = 'ausgi_000'
+#! python2.7.6
 # The Grandest Staircase Of Them All
 # ==================================
 #
@@ -66,51 +68,76 @@
 #     (int) 487067745
 # given some number n we first find the max number of steps by finding where f(x) = (x(x+1))/2 > n. we then loop
 # through all the steps to see all the combinations of bricks
+#
+# In practice we are looking for the unique combinations for a given number of bricks.
+# first we find the max number of columns by finding the first number 'n' on the triangle number sequence that is
+# greater than number of bricks provided.
+# then we loop through each column and find the unique arrangements for bricks for each column set of bricks
+
+
+
 
 def answer(n):
-    max_steps = triangle_number(n)
-    staircase_count = 0
-    bricks_in_step = 0
-    for steps in range(2,max_steps):
-        total_bricks = n
-        for step in range(steps):
-            print(step)
+    bricks = n
+    max_columns = triangle_number(n)
+    unique_count = 0
+    for column in range(2, max_columns + 1):
+        unique_count += unique_staircases(bricks,column)
+    return unique_count
 
+
+def triangle_number(bricks):
+    column = 0
+    while True:
+        column += 1
+        total_bricks = (column * (column + 1)) / 2
+        # print(str(n) + ': ' + str(f_n))
+        if total_bricks > bricks:
+            column -= 1
+            # because we are using range(n) in answer(), we don't need to reduce a step here
+            return column
+
+
+def unique_staircases(bricks, columns):
+    staircase_count = 0
+    for staircase in sums_to_bricks(bricks, columns):
+        if unique_staircase(staircase):
+            staircase_count += 1
     return staircase_count
 
 
-def triangle_number(x):
-    n = 0
-    while True:
-        n += 1
-        f_n = (n*(n+1))/2
-        # print(str(n) + ': ' + str(f_n))
-        if f_n > x:
-            # n -= 1
-            # because we are using range(n) in answer(), we don't need to reduce a step here
-            return n
+def sums_to_bricks(bricks, columns, limit=None):
+    if columns == 1:
+        yield [bricks]
+        return
+    if limit is None:
+        limit = bricks
+    start = (bricks + columns - 1) // columns
+    stop = min(limit, bricks - columns + 1) + 1
+    for i in range(start, stop):
+        for tail in sums_to_bricks(bricks - i, columns - 1, i):
+            yield [i] + tail
 
 
-def combos_by_step(steps, brick_count):
-    # given a number of steps and the brick count, find the combos available. ex with 3 steps and 5 bricks:
-    #   [1,1,3]
-    #   [1,2,2]
-    step_combos = []
-    step_bricks = []
-    for step in range(0,steps):
-        while True:
-            step_bricks.append()
-#
+def unique_staircase(staircase):
+    for i in range(len(staircase)-1):
+        if staircase[i] == staircase[i + 1]:
+            return False
+    return True
 
 
+# print(triangle_number(10))
+# print(unique_staircases(6, 4))
+# print(unique_staircase([3, 3]))
 
-test1 = 3
-a1 = 1
+bricks1 = 100
+answer1 = 1
+bricks2 = 200
+answer2 = 487067745
 
-test2 = 200
-a2 = 487067745
+# print(answer(bricks1))
 
-print(triangle_number(3))
+# print(answer(bricks2))
 
-# print(answer(test1))
-# print(answer(test2))
+for i in range(3,100):
+    print('columns: %s; combos: %s' % (i, answer(i)))
