@@ -18,5 +18,18 @@ def answer(total_bricks):
     # This index on the matrix should contain our solution to the number of distinct combinations.
     return combinations[total_bricks][total_bricks - 1]
 
-print(answer(7))
+tests = [
+    [3,0],
+    [4,0],
+    [5,0],
+    [6,0],
+    [7,0],
+    [10,0],
+    [75,0],
+    [100,0],
+    [200,0]
+]
 
+for results in tests:
+    # print('n = %s; Correct: %s' %(results[1]))
+    print(results[1])
